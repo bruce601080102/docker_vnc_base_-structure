@@ -1,0 +1,19 @@
+# ==================================================================
+RUN apt-get update -y
+RUN apt-get install curl -y
+        # ====terminal===
+RUN apt-get install xfce4-terminal -y
+RUN update-alternatives --config x-terminal-emulator
+RUN yes 2| update-alternatives --config x-terminal-emulator
+        # ====terminal===
+        # ====chinese===
+RUN apt install language-pack-zh-hant -y
+RUN locale-gen
+RUN apt install -y \
+gnome-user-docs-zh-hans \
+language-pack-gnome-zh-hans \
+fcitx \
+fcitx-pinyin \
+fcitx-table-wubi \
+fcitx-chewing -y
+        # ====chinese===

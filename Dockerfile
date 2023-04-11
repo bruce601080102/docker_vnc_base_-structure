@@ -55,16 +55,13 @@ RUN goss -g goss.base.yaml validate
 # NOTE: intentionally NOT using s6 init as the entrypoint
 # This would prevent container debugging if any of those service crash
 
-
-#===================================myself start========================================
-ENV SYSTEMPATH=/run.d
-ENV DOCKER_INSTALL_SAHLL=/root/conf
-
-    #  ====== install package start=======
+# ==================================================================
 RUN apt-get update -y
+RUN apt-get install curl -y
         # ====terminal===
 RUN apt-get install xfce4-terminal -y
 RUN update-alternatives --config x-terminal-emulator
+RUN yes 2| update-alternatives --config x-terminal-emulator
         # ====terminal===
         # ====chinese===
 RUN apt install language-pack-zh-hant -y
@@ -77,9 +74,6 @@ fcitx-pinyin \
 fcitx-table-wubi \
 fcitx-chewing -y
         # ====chinese===
-    #  ====== install package end =======
-
-    #  ====== vnc =======
 RUN sed -i '$a\deb http://cn.archive.ubuntu.com/ubuntu/ bionic universe' /etc/apt/sources.list
 RUN apt-get update -y
 RUN apt-get install vnc4server -y
@@ -90,27 +84,9 @@ RUN sed -i 's/$vncPort = .*/$vncPort = 5900;/g' /usr/bin/vncserver
 RUN mv /root/.vnc/xstartup /root/.vnc/xstartup.bak
 COPY ./shell_conf/xstartup /root/.vnc
 RUN chmod +x /root/.vnc/xstartup
-    #  ====== vnc =======
-
-COPY ./shell_conf/rund/* ${SYSTEMPATH}
-    #  ====== ssh =======
 RUN sed -i '$a\if [ -f /root/conf/start_ssh.sh ]; then ' /root/.bashrc \
 && sed -i '$a\      /root/conf/start_ssh.sh' /root/.bashrc \
 && sed -i '$a\fi' /root/.bashrc
-    #  ====== ssh =======
-
-RUN chmod +x /${SYSTEMPATH}/*.sh
-
-#===================================myself end========================================
-#==================conf================
-
-RUN mkdir ${DOCKER_INSTALL_SAHLL}
-COPY ./shell_conf/install_shell/*  ${DOCKER_INSTALL_SAHLL}
-
-RUN chmod +x ${DOCKER_INSTALL_SAHLL}/*.sh
-RUN apt-get update -y && apt-get install curl -y
-RUN sh ${DOCKER_INSTALL_SAHLL}/install_browser.sh
-
 
 RUN apt-get update && apt-get install -y dialog openssh-server ssh vim
 RUN echo "root:16313302" | chpasswd  \
@@ -119,10 +95,15 @@ RUN echo "root:16313302" | chpasswd  \
 RUN /etc/init.d/ssh start
 EXPOSE 22
 
+ENV SYSTEMPATH=/run.d
+COPY ./shell_conf/rund/* ${SYSTEMPATH}
+RUN chmod +x /${SYSTEMPATH}/*.sh
 
-RUN yes 2| update-alternatives --config x-terminal-emulator
-
-#==================conf=================
+ENV DOCKER_INSTALL_SAHLL=/root/conf
+RUN mkdir ${DOCKER_INSTALL_SAHLL}
+COPY ./shell_conf/install_shell/*  ${DOCKER_INSTALL_SAHLL}
+RUN chmod +x ${DOCKER_INSTALL_SAHLL}/*.sh
+RUN sh ${DOCKER_INSTALL_SAHLL}/install_browser.sh
 
 
 CMD ["/bin/bash", "/run.sh"]

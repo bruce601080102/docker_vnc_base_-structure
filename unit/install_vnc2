@@ -1,0 +1,10 @@
+RUN sed -i '$a\deb http://cn.archive.ubuntu.com/ubuntu/ bionic universe' /etc/apt/sources.list
+RUN apt-get update -y
+RUN apt-get install vnc4server -y
+RUN apt-get install xfce4 -y
+RUN yes 16313302 | vncserver
+RUN vncserver -kill :1
+RUN sed -i 's/$vncPort = .*/$vncPort = 5900;/g' /usr/bin/vncserver
+RUN mv /root/.vnc/xstartup /root/.vnc/xstartup.bak
+COPY ./shell_conf/xstartup /root/.vnc
+RUN chmod +x /root/.vnc/xstartup

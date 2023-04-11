@@ -1,0 +1,11 @@
+
+RUN sed -i '$a\if [ -f /root/conf/start_ssh.sh ]; then ' /root/.bashrc \
+&& sed -i '$a\      /root/conf/start_ssh.sh' /root/.bashrc \
+&& sed -i '$a\fi' /root/.bashrc
+
+RUN apt-get update && apt-get install -y dialog openssh-server ssh vim
+RUN echo "root:16313302" | chpasswd  \
+&& sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+&& sed -i 's/^#\(PermitRootLogin.*\)/\1/' /etc/ssh/sshd_config
+RUN /etc/init.d/ssh start
+EXPOSE 22

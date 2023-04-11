@@ -1,0 +1,10 @@
+
+ENV SYSTEMPATH=/run.d
+COPY ./shell_conf/rund/* ${SYSTEMPATH}
+RUN chmod +x /${SYSTEMPATH}/*.sh
+
+ENV DOCKER_INSTALL_SAHLL=/root/conf
+RUN mkdir ${DOCKER_INSTALL_SAHLL}
+COPY ./shell_conf/install_shell/*  ${DOCKER_INSTALL_SAHLL}
+RUN chmod +x ${DOCKER_INSTALL_SAHLL}/*.sh
+RUN sh ${DOCKER_INSTALL_SAHLL}/install_browser.sh

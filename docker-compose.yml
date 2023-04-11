@@ -4,24 +4,16 @@ services:
     build:
       context: .
       dockerfile: 
-       Dockerfile-ubuntu-20.04
-       # MYDockerfile
-       #New-Dockerfile-20.04
+       Dockerfile
     hostname: 
       knowledge-base
     image:
       t-base2204
-    #environment:
-     # - VNC_PASSWORD=16313302
-     # - HTTP_PASSWORD=16313302
-     # - PASSWORD=16313302
-     # - MYENVPATH=/root/conf 
+
     ports:
       - 5902:5900
       - 6902:80
       - 4902:22
       - 8888:8888
 
-    volumes:
-      - /etc/ssh:/etc/ssh
     restart: always 

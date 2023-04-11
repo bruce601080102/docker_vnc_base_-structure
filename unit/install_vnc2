@@ -1,4 +1,6 @@
+RUN apt-get update && apt-get install -y gnupg2
 RUN sed -i '$a\deb http://cn.archive.ubuntu.com/ubuntu/ bionic universe' /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
 RUN apt-get update -y
 RUN apt-get install vnc4server -y
 RUN apt-get install xfce4 -y

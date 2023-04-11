@@ -51,4 +51,7 @@ RUN goss -g goss.base.yaml validate
 
 # NOTE: intentionally NOT using s6 init as the entrypoint
 # This would prevent container debugging if any of those service crash
+
+# This is a positioning point
+
 CMD ["/bin/bash", "/run.sh"]

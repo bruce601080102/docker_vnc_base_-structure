@@ -16,4 +16,5 @@ fcitx \
 fcitx-pinyin \
 fcitx-table-wubi \
 fcitx-chewing -y
+RUN apt install ttf-wqy-zenhei
         # ====chinese===

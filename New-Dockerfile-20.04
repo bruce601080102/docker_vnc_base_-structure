@@ -1,0 +1,83 @@
+# FROM rsolano/ubuntu-vnc
+FROM dorowu/ubuntu-desktop-lxde-vnc
+
+#ENV MYENVPATH=/home/ubuntu/conf
+#
+#RUN mkdir ${MYENVPATH}
+#
+#COPY ./shell_conf/root_passwd.sh ${MYENVPATH}
+#COPY ./shell_conf/install_browser.sh  ${MYENVPATH}
+#COPY ./shell_conf/google-chrome.desktop  ${MYENVPATH}
+#
+#
+#
+
+
+
+
+ENV MYENVPATH=/root/conf
+RUN mkdir ${MYENVPATH}
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
+RUN apt-get update 
+RUN yes | apt-get install ssh -y
+
+
+RUN echo "root:16313302" | chpasswd  \
+&& sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+&& sed -i 's/^#\(PermitRootLogin.*\)/\1/' /etc/ssh/sshd_config
+RUN /etc/init.d/ssh start
+EXPOSE 22
+
+COPY ./shell_conf/start_ssh.sh ${MYENVPATH}
+RUN chmod +x ${MYENVPATH}/start_ssh.sh
+RUN sed -i '$a\if [ -f /root/conf/start_ssh.sh ]; then ' /root/.bashrc \
+&& sed -i '$a\      /root/conf/start_ssh.sh' /root/.bashrc \
+&& sed -i '$a\fi' /root/.bashrc
+
+RUN . /root/.bashrc
+
+
+
+
+#===================================myself========================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#RUN chmod +x ${MYENVPATH}/*.sh
+#RUN apt-get update
+#RUn apt-get install expect -y
+#RUN expect ${MYENVPATH}/root_passwd.sh
+##RUN sh ${MYENVPATH}/install_browser.sh
+# 
+#RUN echo "root:16313302" | chpasswd  \
+#&& sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+#&& sed -i 's/^#\(PermitRootLogin.*\)/\1/' /etc/ssh/sshd_config
+#RUN /etc/init.d/ssh start
+#EXPOSE 22
+#
+#RUN apt-get install -y python3.8 python3-pip python3.8-dev && \
+#    echo "alias python=python3.8" >> ~/.bashrc
+#
+
+#CMD ["/bin/bash", "/run.sh"]

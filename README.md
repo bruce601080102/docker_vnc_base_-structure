@@ -31,7 +31,7 @@ SSH_PASSWORD=16313302
 VNC_PASSWORD=16313302
 ```
 
-## rund
+## shell_conf/rund
 環境重啟過後需要執行的腳本放在這裡,將會自動執行腳本
 
 ## 執行

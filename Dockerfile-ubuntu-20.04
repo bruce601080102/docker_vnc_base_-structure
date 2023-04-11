@@ -57,58 +57,59 @@ RUN goss -g goss.base.yaml validate
 
 
 #===================================myself start========================================
-RUN sed -i '$a\deb http://cn.archive.ubuntu.com/ubuntu/ bionic universe' /etc/apt/sources.list
-RUN apt-get update 
 ENV SYSTEMPATH=/run.d
+ENV DOCKER_INSTALL_SAHLL=/root/conf
 
-
-RUN apt-get install vnc4server -y
-RUN apt-get install xfce4 -y
-RUN yes 16313302 | vncserver
-RUN vncserver -kill :1
-RUN mv /root/.vnc/xstartup /root/.vnc/xstartup.bak
-COPY ./shell_conf/xstartup /root/.vnc
-
-RUN chmod +x /root/.vnc/xstartup
-RUN sed -i 's/$vncPort = .*/$vncPort = 5900;/g' /usr/bin/vncserver
-
-COPY ./shell_conf/run.sh ${SYSTEMPATH}
-
-RUN chmod +x /${SYSTEMPATH}/*.sh
-# ====chinese===
+    #  ====== install package start=======
+RUN apt-get update -y
+        # ====terminal===
+RUN apt-get install xfce4-terminal -y
+RUN update-alternatives --config x-terminal-emulator
+        # ====terminal===
+        # ====chinese===
 RUN apt install language-pack-zh-hant -y
 RUN locale-gen
-
-RUN apt-get install fcitx fcitx-chewing -y
 RUN apt install -y \
 gnome-user-docs-zh-hans \
 language-pack-gnome-zh-hans \
 fcitx \
 fcitx-pinyin \
-fcitx-table-wubi
+fcitx-table-wubi \
+fcitx-chewing -y
+        # ====chinese===
+    #  ====== install package end =======
 
+    #  ====== vnc =======
+RUN sed -i '$a\deb http://cn.archive.ubuntu.com/ubuntu/ bionic universe' /etc/apt/sources.list
+RUN apt-get update -y
+RUN apt-get install vnc4server -y
+RUN apt-get install xfce4 -y
+RUN yes 16313302 | vncserver
+RUN vncserver -kill :1
+RUN sed -i 's/$vncPort = .*/$vncPort = 5900;/g' /usr/bin/vncserver
+RUN mv /root/.vnc/xstartup /root/.vnc/xstartup.bak
+COPY ./shell_conf/xstartup /root/.vnc
+RUN chmod +x /root/.vnc/xstartup
+    #  ====== vnc =======
 
+COPY ./shell_conf/rund/* ${SYSTEMPATH}
+    #  ====== ssh =======
+RUN sed -i '$a\if [ -f /root/conf/start_ssh.sh ]; then ' /root/.bashrc \
+&& sed -i '$a\      /root/conf/start_ssh.sh' /root/.bashrc \
+&& sed -i '$a\fi' /root/.bashrc
+    #  ====== ssh =======
 
-RUN apt-get install xfce4-terminal -y
-RUN update-alternatives --config x-terminal-emulator
+RUN chmod +x /${SYSTEMPATH}/*.sh
+
 #===================================myself end========================================
-#==================conf=================
+#==================conf================
 
-ENV MYENVPATH=/root/conf
+RUN mkdir ${DOCKER_INSTALL_SAHLL}
+COPY ./shell_conf/install_shell/*  ${DOCKER_INSTALL_SAHLL}
 
-RUN mkdir ${MYENVPATH}
-COPY ./shell_conf/root_passwd.sh ${MYENVPATH}
-COPY ./shell_conf/install_browser.sh  ${MYENVPATH}
-COPY ./shell_conf/google-chrome.desktop  ${MYENVPATH}
-
-RUN chmod +x ${MYENVPATH}/*.sh
-RUN apt-get update
-RUn apt-get install expect -y
+RUN chmod +x ${DOCKER_INSTALL_SAHLL}/*.sh
 RUN apt-get update -y && apt-get install curl -y
-#RUN expect ${MYENVPATH}/root_passwd.sh
-RUN sh ${MYENVPATH}/install_browser.sh
-
-
+RUN sh ${DOCKER_INSTALL_SAHLL}/install_browser.sh
 
 
 RUN apt-get update && apt-get install -y dialog openssh-server ssh vim
@@ -119,22 +120,9 @@ RUN /etc/init.d/ssh start
 EXPOSE 22
 
 
-ENV SYSTEMPATH=/run.d
-
-COPY ./shell_conf/start_ssh.sh ${SYSTEMPATH}
-COPY ./shell_conf/vnc_interact.sh ${SYSTEMPATH}
-RUN chmod +x ${SYSTEMPATH}/start_ssh.sh
-RUN sed -i '$a\if [ -f /root/conf/start_ssh.sh ]; then ' /root/.bashrc \
-&& sed -i '$a\      /root/conf/start_ssh.sh' /root/.bashrc \
-&& sed -i '$a\fi' /root/.bashrc
-
 RUN yes 2| update-alternatives --config x-terminal-emulator
 
 #==================conf=================
-
-
-
-
 
 
 CMD ["/bin/bash", "/run.sh"]

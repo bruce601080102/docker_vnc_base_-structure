@@ -8,3 +8,6 @@ RUN mkdir ${DOCKER_INSTALL_SAHLL}
 COPY ./shell_conf/install_shell/*  ${DOCKER_INSTALL_SAHLL}
 RUN chmod +x ${DOCKER_INSTALL_SAHLL}/*.sh
 RUN sh ${DOCKER_INSTALL_SAHLL}/install_browser.sh
+
+ENV NFS=/root/Desktop/nfs
+RUN mkdir ${NFS}

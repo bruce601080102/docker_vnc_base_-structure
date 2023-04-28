@@ -17,3 +17,17 @@ services:
       - 8888:8888
 
     restart: always 
+    volumes:
+      - type: volume
+        source: nfs-volume 
+        target: /root/Desktop/nfs
+        volume:
+          nocopy: true
+
+volumes:
+  nfs-volume :
+    driver: local
+    driver_opts:
+      type: "nfs"
+      o: addr=192.168.10.250,nolock,soft,rw
+      device: ":/volume1/成員共享空間/bruce/知識庫"
